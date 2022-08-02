@@ -13,10 +13,10 @@ from functools import partial
 import torch
 import clip 
 
-COCO_ROOT_TRAIN = '/checkpoint/gcouairon/coco/full'
-COCO_ANN_TRAIN = '/checkpoint/gcouairon/coco/train_annotations.json'
-COCO_ROOT_VAL = '/checkpoint/gcouairon/coco/full'
-COCO_ANN_VAL = '/checkpoint/gcouairon/coco/val_annotations.json'
+COCO_ROOT_TRAIN = '/Users/sravanimanduva/Downloads/train2017'
+COCO_ANN_TRAIN = '/Users/sravanimanduva/Downloads/annotations/captions_train2017.json'
+COCO_ROOT_VAL = '/Users/sravanimanduva/Downloads/val2017'
+COCO_ANN_VAL = '/Users/sravanimanduva/Downloads/annotations/captions_val2017.json'
     
 def main():
     parser = argparse.ArgumentParser(description='Train adaptation layers')
@@ -139,7 +139,7 @@ def train_adaptation_layers(args):
             gpus=args.gpus,
             num_nodes=args.nodes,
             gradient_clip_val=1,
-            accelerator='ddp',
+            accelerator='cpu',
             max_epochs=args.max_epochs,
             progress_bar_refresh_rate=10)
             

@@ -4,4 +4,6 @@ tqdm
 torch
 torchvision
 PIL
+pytorch-lightning
+pycocotools
 git+https://github.com/openai/CLIP.git

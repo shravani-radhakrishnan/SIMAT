@@ -32,8 +32,18 @@ Below are a few examples that are in the dataset, and images that were retrieved
 
 The SIMAT database is composed of crops of images from Visual Genome. You first need to install Visual Genome and then run the following command :
 
+And after that install all the required dependencies by seeing the Requirements.txt
+
+Later Download the both images set from this link https://visualgenome.org/api/v0/api_home.html
+
 ```python
 python prepare_dataset.py --VG_PATH=/path/to/visual/genome
+```
+
+In the above code path defines the images path where we have downloaded below code which it worked for us 
+
+```python
+python3 prepare_dataset.py --path=/Users/Downloads/images
 ```
 
 ## Perform inference with CLIP ViT-B/32
