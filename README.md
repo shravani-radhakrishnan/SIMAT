@@ -29,13 +29,36 @@ pip install visual-genome
 2. And install all the required dependencies listed below
 
 python>=3.6
-pandas
-tqdm
-torch
-torchvision
-PIL
-pytorch-lightning
-pycocotools
+pandas:
+```python
+pip install pandas
+```
+tqdm:
+```python
+pip install tqdm
+```
+torch:
+```python
+pip install torch
+```
+torchvision:
+```python
+pip install torchvision
+```
+PIL:
+```python
+pip install Pillow
+```
+pytorch-lightning:
+```python
+pip install pytorch-lightning
+```
+pycocotools:
+```python
+pip install pycocotools
+```
+CLIP:
+(git+https://github.com/openai/CLIP.git)
 
 3. After downloading the required depencies Download the part 1, part 2 images set from the [Visual Genome](https://visualgenome.org/api/v0/api_home.html) Club both part1 and part2 images into single folder.
 
