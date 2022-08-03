@@ -1,6 +1,5 @@
-This repository contains the database and code used in the paper [Embedding Arithmetic for Text-driven Image Transformation](https://arxiv.org/abs/2112.03162) (Guillaume Couairon, Holger Schwenk, Matthijs Douze,  Matthieu Cord)
+This repository contains code used in the paper [Embedding Arithmetic for Text-driven Image Transformation](https://arxiv.org/abs/2112.03162) (Guillaume Couairon, Holger Schwenk, Matthijs Douze,  Matthieu Cord)
 
-The inspiration for this work are the geometric properties of word embeddings, such as Queen ~ Woman + (King - Man).
 We extend this idea to multimodal embedding spaces (like CLIP), which let us semantically edit images via "delta vectors". 
 
 Transformed images can then be retrieved in a dataset of images.
@@ -8,17 +7,6 @@ Transformed images can then be retrieved in a dataset of images.
 <p align="center">
     <img src="assets/method.png">
 </p>
-
-## The SIMAT Dataset
-
-We build SIMAT, a dataset to evaluate the task of text-driven image transformation, for simple images that can be characterized by a single subject-relation-object annotation. 
-A **transformation query** is a pair (*image*, *query*) where the query asks to change the subject, the relation or the object in the input *image*.
-SIMAT contains ~6k images and an average of 3 transformation queries per image.
-
-The goal is to retrieve an image in the dataset that corresponds to the query specifications.
-We use [OSCAR](https://github.com/microsoft/Oscar) as an oracle to check whether retrieved images are correct with respect to the expected modifications. 
-
-
 
 ## Examples
 
@@ -30,71 +18,40 @@ Below are a few examples that are in the dataset, and images that were retrieved
 
 ## Download dataset
 
-The SIMAT database is composed of crops of images from Visual Genome. You first need to install Visual Genome and then run the following command :
+The SIMAT database is composed of images from Visual Genome.
 
-And after that install all the required dependencies by seeing the Requirements.txt
-
-Later Download the both images set from this link https://visualgenome.org/api/v0/api_home.html
+1. First need to install the Visual Genome 
 
 ```python
-python prepare_dataset.py --VG_PATH=/path/to/visual/genome
+pip install visual-genome
 ```
 
-In the above code path defines the images path where we have downloaded below code which it worked for us 
+2. And install all the required dependencies listed below
+
+python>=3.6
+pandas
+tqdm
+torch
+torchvision
+PIL
+pytorch-lightning
+pycocotools
+
+3. After downloading the required depencies Download the part 1, part 2 images set from the [Visual Genome](https://visualgenome.org/api/v0/api_home.html) Club both part1 and part2 images into single folder.
+
+4. Excution will start from the prepare_dataset.py file use below command to execute and specify the path where Visual Genome Images are downloaded.
 
 ```python
-python3 prepare_dataset.py --path=/Users/Downloads/images
+python prepare_dataset.py --path=/Users/Downloads/images
 ```
+If do you use python3 please specifiy python3 instead of python in the above command.
 
-## Perform inference with CLIP ViT-B/32
-
-In this example, we use the CLIP ViT-B/32 model to edit an image. Note that the dataset of clip embeddings is pre-computed.
+5. Install COCO 
 
 ```python
-import clip
-from torchvision import datasets
-from PIL import Image
-from IPython.display import display
-
-#hack to normalize tensors easily
-torch.Tensor.normalize = lambda x:x/x.norm(dim=-1, keepdim=True)
-
-# database to perform the retrieval step
-dataset = datasets.ImageFolder('simat_db/images/')
-
-db = torch.load('data/simat_img_clip.pt')
-db_stacked = torch.stack(list(db.values())).float()
-
-idx2rid = list(db.keys())
-
-model, prep = clip.load('ViT-B/32', device=device)
-
-image = Image.open('simat_db/images/images/98316.png')
-img_enc = model.encode_image(prep(image).unsqueeze(0).to('cuda:0')).float().cpu().detach()
-
-txt = ['cat', 'dog']
-txt_enc = model.encode_text(clip.tokenize(txt).to('cuda:0')).float().cpu().detach()
-
-# optionally, we can apply a linear layer on top of the embeddings
-heads = torch.load(f'data/head_clip_t=0.1.pt')
-img_enc = heads['img_head'](img_enc)
-txt_enc = heads['txt_head'](txt_enc)
-
-db = heads['img_head'](db).normalize()
-
-
-# now we perform the transformation step
-lbd = 1
-target_enc = img_enc.normalize() + lbd * (txt_enc[1].normalize() - txt_enc[0].normalize())
-
-
-retrieved_idx = (db_stacked @ target_enc.float().T).argmax(0).item()
-
-retrieved_rid = idx2rid[retrieved_idx]
-
-display(Image.open(f'simat_db/images/images/{retrieved_rid}.png'))
-
+pip install coco
 ```
+6. Install COCO [datasets](http://images.cocodataset.org/annotations/annotations_trainval2017.zip) from this [link] (http://images.cocodataset.org/annotations/annotations_trainval2017.zip) and place respective file path in the adaption.py file.
 
 
 ## Compute SIMAT scores with CLIP
@@ -114,26 +71,3 @@ In this part, you can train linear layers after the CLIP encoder on the COCO dat
 python adaptation.py --backbone ViT-B/32 --lr 0.001 --tau 0.1 --batch_size 512
 ```
 
-## Citation
-
-If you find this paper or dataset useful for your research, please use the following.
-```
-@article{gco1embedding,
-  title={Embedding Arithmetic for text-driven Image Transformation},
-  author={Guillaume Couairon, Matthieu Cord, Matthijs Douze, Holger Schwenk},
-  journal={arXiv preprint arXiv:2112.03162},
-  year={2021}
-}
-```
-
-## References
-
-Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, Ilya Sutskever. [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020), OpenAI 2021
-
-Ranjay Krishna, Yuke Zhu, Oliver Groth, Justin Johnson, Kenji Hata, Joshua Kravitz, Stephanie Chen, Yannis Kalantidis, Li-Jia Li, David A. Shamma, Michael S. Bernstein, Fei-Fei Li. [Visual Genome: Connecting Language and Vision Using Crowdsourced Dense Image Annotations](https://arxiv.org/abs/1602.07332), IJCV 2017
-
-Xiujun Li, Xi Yin, Chunyuan Li, Pengchuan Zhang, Xiaowei Hu, Lei Zhang, Lijuan Wang, Houdong Hu, Li Dong, Furu Wei, Yejin Choi, Jianfeng Gao, [Oscar: Object-Semantics Aligned Pre-training for Vision-Language Tasks](https://arxiv.org/abs/1602.07332), ECCV 2020
-
-## License
-
-The SIMAT is released under the MIT license. See LICENSE for details.

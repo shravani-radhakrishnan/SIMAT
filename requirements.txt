@@ -1,9 +1,0 @@
-python>=3.6
-pandas
-tqdm
-torch
-torchvision
-PIL
-pytorch-lightning
-pycocotools
-git+https://github.com/openai/CLIP.git
