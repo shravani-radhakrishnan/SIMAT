@@ -74,7 +74,7 @@ If do you use python3 please specifiy python3 instead of python in the above com
 ```python
 pip install coco
 ```
-6. Install COCO [datasets](http://images.cocodataset.org/annotations/annotations_trainval2017.zip) from this [link] (http://images.cocodataset.org/annotations/annotations_trainval2017.zip) and place respective file path in the adaption.py file.
+6. Install COCO [datasets](http://images.cocodataset.org/annotations/annotations_trainval2017.zip) from this [link](http://images.cocodataset.org/annotations/annotations_trainval2017.zip) and place respective file path in the adaption.py file.
 
 
 ## Compute SIMAT scores with CLIP
